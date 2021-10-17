@@ -1,13 +1,14 @@
 mod animation;
+mod animations;
 mod board;
 mod control;
 mod rgb;
 
+use animation::Animation;
 use control::Control;
-use rgb::RGB;
-use std::{fs::OpenOptions, thread::sleep, time::Duration};
+use std::fs::OpenOptions;
 
-use crate::board::Loc;
+use crate::animations::Marquee;
 
 fn main() {
     let f_ctrl = OpenOptions::new()
@@ -16,12 +17,8 @@ fn main() {
         .open("/dev/input/ckb1/cmd") // TODO: pass through cmdline args
         .unwrap();
 
-    let mut control = Control::new(f_ctrl);
+    let control = Control::new(f_ctrl);
 
-    // TODO: remove
-    control.write_rgb(vec![Loc(0, 0), Loc(1, 0)], RGB(255, 0, 0));
-
-    sleep(Duration::from_secs(2));
-
-    control.clear_board();
+    let mut marquee = Marquee::new(control);
+    marquee.repeat();
 }
